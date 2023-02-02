@@ -4,18 +4,18 @@ const {
   createProduct,
   updateProduct,
   deleteProduct,
+  findProducts,
 } = require('../controllers/product.controller');
+const { validProductById } = require('../middlewares/product.middlewares');
 
 const router = Router();
 
-router.get('/', findProduct);
-
+router.get('/:id', findProduct);
+router.get('/', findProducts);
 router.post('/', createProduct);
-router.put('/', updateProduct);
-router.patch('/', (req, res) => {
-  res.json({ status: 'success', message: 'ROUTE - PATCH' });
-});
-router.delete('/', deleteProduct);
+router.patch('/:id', updateProduct);
+
+router.delete('/:id',validProductById, deleteProduct);
 
 module.exports = {
   productRouter: router,
