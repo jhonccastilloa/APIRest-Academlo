@@ -1,7 +1,16 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { createUser } = require('../controllers/auth.controller');
-const validIfExistEmail = require('../middlewares/user.middleware');
+const {
+  createUser,
+  login,
+  updatePassword,
+  renweToken,
+} = require('../controllers/auth.controller');
+const { protectAccountOwner, protect } = require('../middlewares/auth.middlewares');
+const {
+  validIfExistUser,
+  validIfExistEmail,
+} = require('../middlewares/user.middleware');
 const validateField = require('../middlewares/validateField.middleware');
 
 const router = Router();
@@ -17,6 +26,35 @@ router.post(
   ],
   createUser
 );
+
+router.patch(
+  '/password/:id',
+  [
+    check(
+      'currentPassword',
+      'the current password must be mandatory'
+    ).notEmpty(),
+    check('newPassword', 'The new password must be mandatory').notEmpty(),
+    validateField,
+    validIfExistUser,
+    protectAccountOwner
+  ],
+  updatePassword
+);
+
+router.post(
+  '/login',
+  [
+    check('email', 'the email must be mandatory').notEmpty().isEmail(),
+    check('password', 'the password must be mandatory').notEmpty(),
+    validateField,
+  ],
+  login
+);
+
+router.use(protect)
+
+router.get('/renew',renweToken)
 module.exports = {
   authRouter: router,
 };

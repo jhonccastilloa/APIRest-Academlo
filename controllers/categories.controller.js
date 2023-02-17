@@ -1,12 +1,17 @@
 const Category = require('../models/category.models');
+const Product = require('../models/product.models');
 const catchAsync = require('../utils/catchAsync');
 
 const findCategories = async (req, res) => {
   try {
     const categories = await Category.findAll({
+      attributes:{exclude:['createdAt','updateAt']},
       where: {
         status: true,
       },
+      include:[
+        {model:Product}
+      ]
     });
     res.json({
       status: 'success',

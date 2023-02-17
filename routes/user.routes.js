@@ -6,12 +6,17 @@ const {
   deleteUser,
   updateUser,
 } = require('../controllers/user.controller');
+const { protect } = require('../middlewares/auth.middlewares');
+const { validIfExistUser } = require('../middlewares/user.middleware');
 
 const router = Router();
 
 router.get('/', findUsers);
+router.get('/orders',protect,getOrders)
 router.get('/:id', findUser);
-router.delete('/:id', deleteUser);
+router.use(protect);
+
+router.delete('/:id', validIfExistUser,deleteUser);
 router.patch('/:id', updateUser);
 
 module.exports = {
