@@ -3,6 +3,8 @@ const Order = require('../models/order.model');
 const ProductInCart = require('../models/productInCart.models');
 const User = require('../models/user.model');
 const catchAsync = require('../utils/catchAsync');
+const { ref, getDownloadURL } = require('firebase/storage');
+const { storage } = require('../utils/firebase');
 
 const findUsers = async (req, res) => {
   const users = await User.findAll({
@@ -10,7 +12,19 @@ const findUsers = async (req, res) => {
       status: true,
     },
   });
-  res.json({ status: 'success', message: 'ROUTE - GET CONTROLLER', users });
+  const usersPromise = users.map(async user => {
+    const imgRef = ref(storage, user.profileImageUrl);
+    const url = await getDownloadURL(imgRef);
+    user.profileImageUrl = url;
+    return user;
+  });
+
+  const userResolved = await Promise.all(usersPromise);
+  res.json({
+    status: 'success',
+    message: 'ROUTE - GET CONTROLLER',
+    users: userResolved,
+  });
 };
 const findUser = async (req, res) => {
   try {
@@ -126,4 +140,11 @@ const getOrder = catchAsync(async (req, res, next) => {
     orders,
   });
 });
-module.exports = { findUser, findUsers, deleteUser, updateUser, getOrders,getOrder };
+module.exports = {
+  findUser,
+  findUsers,
+  deleteUser,
+  updateUser,
+  getOrders,
+  getOrder,
+};

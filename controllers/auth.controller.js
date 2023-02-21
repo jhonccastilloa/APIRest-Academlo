@@ -2,28 +2,42 @@ const User = require('../models/user.model');
 const catchAsync = require('../utils/catchAsync');
 const bcrypt = require('bcryptjs');
 const generateJWT = require('../utils/jwt');
+const { ref, uploadBytes } = require('firebase/storage');
+const { storage } = require('../utils/firebase');
+
 
 const createUser = catchAsync(async (req, res, next) => {
-  const { username, email, password,role } = req.body;
-  console.table(req.body)
-  console.log(req.file)
-  // const user = new User({ username, email, password,role });
-  // const salt = await bcrypt.genSalt(10);
-  // user.password = await bcrypt.hash(password, salt);
-  // await user.save();
-  // const token = await generateJWT(user.id);
+  const { username, email, password, role = 'user' } = req.body;
 
-  // res.status(201).json({
-  //   status: 'success',
-  //   message: 'User created successfully',
-  //   token,
-  //   user: {
-  //     id: user.id,
-  //     username: user.username,
-  //     email: user.email,
-  //     role: user.role,
-  //   },
-  // });
+  const imgRef = ref(storage, `user/${Date.now()}-${req.file.originalname}`);
+  const imgUploaded = await uploadBytes(imgRef, req.file.buffer);
+  // console.log(imgUploaded);
+  const user = new User({
+    username,
+    email,
+    password,
+    role,
+    profileImageUrl: imgUploaded.metadata.fullPath,
+  });
+
+  console.log(user);
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(password, salt);
+  await user.save();
+  const token = await generateJWT(user.id);
+
+  res.status(201).json({
+    status: 'success',
+    message: 'User created successfully',
+    token,
+    user: {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      profileImageUrl: user.profileImageUrl,
+    },
+  });
 });
 
 const login = catchAsync(async (req, res, next) => {

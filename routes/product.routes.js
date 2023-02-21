@@ -8,6 +8,7 @@ const {
 } = require('../controllers/product.controller');
 const { protect } = require('../middlewares/auth.middlewares');
 const { validProductById } = require('../middlewares/product.middlewares');
+const { upload } = require('../utils/multer');
 
 const router = Router();
 
@@ -15,7 +16,7 @@ router.get('/:id', findProduct);
 router.get('/', findProducts);
 router.use(protect)
 
-router.post('/', createProduct);
+router.post('/',upload.array('productImgs',3), createProduct);
 router.patch('/:id', updateProduct);
 
 router.delete('/:id',validProductById, deleteProduct);
