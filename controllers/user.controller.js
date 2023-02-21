@@ -1,3 +1,6 @@
+const Cart = require('../models/cart.models');
+const Order = require('../models/order.model');
+const ProductInCart = require('../models/productInCart.models');
 const User = require('../models/user.model');
 const catchAsync = require('../utils/catchAsync');
 
@@ -70,4 +73,57 @@ const deleteUser = async (req, res) => {
   });
 };
 
-module.exports = {  findUser, findUsers, deleteUser, updateUser };
+const getOrders = catchAsync(async (req, res, next) => {
+  const { sessionUser } = req;
+  console.log(sessionUser);
+  const orders = await Order.findAll({
+    where: {
+      userId: sessionUser.id,
+      status: true,
+    },
+    include: {
+      model: Cart,
+      where: {
+        status: 'purchased',
+      },
+      include: {
+        model: ProductInCart,
+        where: {
+          status: 'purchased',
+        },
+      },
+    },
+  });
+  res.json({
+    orders,
+  });
+});
+
+const getOrder = catchAsync(async (req, res, next) => {
+  const { sessionUser } = req;
+  const { id } = req.params;
+  console.log(sessionUser);
+  const orders = await Order.findOne({
+    where: {
+      userId: sessionUser.id,
+      status: true,
+      id,
+    },
+    include: {
+      model: Cart,
+      where: {
+        status: 'purchased',
+      },
+      include: {
+        model: ProductInCart,
+        where: {
+          status: 'purchased',
+        },
+      },
+    },
+  });
+  res.json({
+    orders,
+  });
+});
+module.exports = { findUser, findUsers, deleteUser, updateUser, getOrders,getOrder };

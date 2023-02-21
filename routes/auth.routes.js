@@ -12,12 +12,14 @@ const {
   validIfExistEmail,
 } = require('../middlewares/user.middleware');
 const validateField = require('../middlewares/validateField.middleware');
+const { upload } = require('../utils/multer');
 
 const router = Router();
 
 router.post(
   '/register',
   [
+    upload.single('profileImageUrl'),
     check('username', 'the username must be mandatory').notEmpty(),
     check('password', 'the password must be mandatory').notEmpty(),
     check('email', 'the email must be mandatory').notEmpty().isEmail(),

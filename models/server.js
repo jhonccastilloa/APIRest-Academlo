@@ -80,10 +80,8 @@ class Server {
       .then(() => console.log('Database authenticate'))
       .catch(err => console.log(err));
 
-    // User.hasMany(Product)
-    // Product.belongsTo(User)
     initModels()
-    db.sync()
+    db.sync({force:true})
       .then(() => console.log('Database synced'))
       .catch(err => console.log(err));
   }

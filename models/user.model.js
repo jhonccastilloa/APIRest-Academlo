@@ -28,9 +28,13 @@ const User = db.define('users', {
     defaultValue: 'user',
     enum: ['user', 'admin'],
   },
-  passwordChangedAt:{
-    type:DataTypes.DATE,
-    allowNull:true
+  passwordChangedAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  profileImageUrl: {
+    allowNull: true,
+    type: DataTypes.STRING,
   },
   status: {
     type: DataTypes.BOOLEAN,

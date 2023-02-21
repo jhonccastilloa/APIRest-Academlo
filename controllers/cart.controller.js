@@ -107,13 +107,13 @@ const buyProductOnCart = catchAsync(async (req, res, next) => {
           status: 'active',
         },
       });
-      return await foundProductInCart.update({ status: 'purchase' });
+      return await foundProductInCart.update({ status: 'purchased' });
     }
   );
   await Promise.all(purchasedProductPromises);
   await Promise.all(statusProductInCartPromises);
 
-  await cart.update({ status: 'purchasesd' });
+  await cart.update({ status: 'purchased' });
 
   const order = await Order.create({
     userId: sessionUser.id,

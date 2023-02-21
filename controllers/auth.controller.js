@@ -5,29 +5,25 @@ const generateJWT = require('../utils/jwt');
 
 const createUser = catchAsync(async (req, res, next) => {
   const { username, email, password,role } = req.body;
+  console.table(req.body)
+  console.log(req.file)
+  // const user = new User({ username, email, password,role });
+  // const salt = await bcrypt.genSalt(10);
+  // user.password = await bcrypt.hash(password, salt);
+  // await user.save();
+  // const token = await generateJWT(user.id);
 
-  //1. crear una instancia de la clase user
-  const user = new User({ username, email, password,role });
-  console.log({ user });
-  //2. encriptar la contraseña
-  const salt = await bcrypt.genSalt(10);
-  user.password = await bcrypt.hash(password, salt);
-  //3. guardar en la base de datos con las contraseñas encriptadas
-  await user.save();
-  //4. generar el jwt
-  const token = await generateJWT(user.id);
-
-  res.status(201).json({
-    status: 'success',
-    message: 'User created successfully',
-    token,
-    user: {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-    },
-  });
+  // res.status(201).json({
+  //   status: 'success',
+  //   message: 'User created successfully',
+  //   token,
+  //   user: {
+  //     id: user.id,
+  //     username: user.username,
+  //     email: user.email,
+  //     role: user.role,
+  //   },
+  // });
 });
 
 const login = catchAsync(async (req, res, next) => {
@@ -96,4 +92,5 @@ const renweToken = catchAsync(async (req, res, next) => {
     user,
   });
 });
+
 module.exports = { createUser, login, updatePassword, renweToken };

@@ -6,7 +6,7 @@ const findProducts = async (req, res) => {
       status: true,
     },
   });
-  console.log(req);
+
   res.json({ status: 'success', message: 'ROUTE - GET CONTROLLER', products });
 };
 const findProduct = async (req, res) => {

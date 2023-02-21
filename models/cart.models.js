@@ -13,7 +13,7 @@ const Cart = db.define('carts', {
     allowNull: false,
   },
   status: {
-    type: DataTypes.ENUM("active","disable"),
+    type: DataTypes.ENUM("active","disable","purchased"),
     allowNull: false,
     defaultValue: "active",
   },

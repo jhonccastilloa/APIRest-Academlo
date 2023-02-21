@@ -55,12 +55,11 @@ const validIfExistProductnStock = catchAsync(async (req, res, next) => {
 
   next();
 });
- const validExistProductInStockForUpdate = catchAsync(async (req, res, next) => {
-
+const validExistProductInStockForUpdate = catchAsync(async (req, res, next) => {
   const { product } = req;
   const { newQty } = req.body;
 
-  if(newQty > product.quantity){
+  if (newQty > product.quantity) {
     return next(
       new AppError('There are not enaugh products in the stock', 400)
     );
@@ -69,20 +68,18 @@ const validIfExistProductnStock = catchAsync(async (req, res, next) => {
   next();
 });
 
-
- const validExistProductIdByParams = catchAsync(async (req, res, next) => {
-
+const validExistProductIdByParams = catchAsync(async (req, res, next) => {
   const { productId } = req.params;
 
   const product = await Product.findOne({
     where: {
       id: productId,
-      status: true
-    }
-  })
+      status: true,
+    },
+  });
 
-  if(!product){
-    return next(new AppError('Product not found', 404))
+  if (!product) {
+    return next(new AppError('Product not found', 404));
   }
 
   next();
@@ -92,5 +89,5 @@ module.exports = {
   validBodyProductById,
   validIfExistProductnStock,
   validExistProductInStockForUpdate,
-  validExistProductIdByParams
+  validExistProductIdByParams,
 };
