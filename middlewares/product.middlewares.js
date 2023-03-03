@@ -1,4 +1,5 @@
 const Product = require('../models/product.models');
+const ProductImg = require('../models/productImg');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
@@ -10,7 +11,14 @@ const validProductById = async (req, res, next) => {
         id,
         status: true,
       },
+      include: [
+        {
+          model: ProductImg,
+        },
+      ],
     });
+    console.log({product})
+    console.log("gasd")
     if (!product)
       return res
         .status(404)

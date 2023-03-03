@@ -1,6 +1,6 @@
 const Product = require('../models/product.models');
 const ProductImg = require('../models/productImg');
-const { ref, uploadBytes } = require('firebase/storage');
+const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
 const { storage } = require('../utils/firebase');
 
 const findProducts = async (req, res) => {
@@ -8,20 +8,40 @@ const findProducts = async (req, res) => {
     where: {
       status: true,
     },
+    include: [
+      {
+        model: ProductImg,
+      },
+    ],
   });
+
+  const productPromise = products.map(async product => {
+    const productImgsPromise = product.ProductImgs.map(async productImg => {
+      const imgRef = ref(storage, productImg.imgUrl);
+      const url = await getDownloadURL(imgRef);
+
+      productImg.imgUrl = url;
+      return productImg;
+    });
+    await Promise.all(productImgsPromise);
+  });
+  await Promise.all(productPromise);
 
   res.json({ status: 'success', message: 'ROUTE - GET CONTROLLER', products });
 };
 const findProduct = async (req, res) => {
-  const { id } = req.params;
-  const product = await Product.findOne({
-    where: {
-      id,
-      status: true,
-    },
+  const { product } = req;
+
+  console.log(product);
+  const productImgsPromises = product.ProductImgs.map(async productImg => {
+    const imgRef = ref(storage, productImg.imgUrl);
+    const url = await getDownloadURL(imgRef);
+
+    productImg.imgUrl = url;
+    return productImg;
   });
-  if (!product)
-    return res.status(404).json({ error: true, message: 'Product not found' });
+
+  await Promise.all(productImgsPromises);
   res.json({
     status: 'success',
     message: 'ROUTE BY ID - GET CONTROLLER',

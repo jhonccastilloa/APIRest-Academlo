@@ -12,7 +12,7 @@ const { upload } = require('../utils/multer');
 
 const router = Router();
 
-router.get('/:id', findProduct);
+router.get('/:id',validProductById, findProduct);
 router.get('/', findProducts);
 router.use(protect)
 

@@ -7,7 +7,7 @@ const handleCastError22P02 = err => {
 const handleJWTError = () =>
   new AppError('invalid token, Please login again', 401);
 const handleJWTExpiredError = () =>
-  new AppError('Ypur tokes has expired, please login again', 401);
+  new AppError('Your tokes has expired, please login again', 401);
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,

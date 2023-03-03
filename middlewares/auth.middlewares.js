@@ -2,10 +2,11 @@ const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
+
 const protect = catchAsync(async (req, res, next) => {
   const { authorization } = req.headers;
   // next()
-  if (!authorization && !authorization.startswith('Bearer'))
+  if (!authorization || !authorization.startsWith('Bearer'))
     return next(
       new AppError('Ypu are not logged in!  please log in to get acess', 401)
     );
